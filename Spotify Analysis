@@ -1,0 +1,50 @@
+/* SPOTIFY DATA ANALYSIS PROJECT */
+
+/* For this project, I downloaded Spotify data from Kaggle. (https://www.kaggle.com/datasets/equinxx/spotify-top-50-songs-in-2021/)
+Then I created a table and inserted the .csv Spotify data into the table (in SQLiteStudio).
+Finally, I performed analytics on the data. */
+
+/* Creating the Spotify data table: */
+
+CREATE TABLE BIT_DB.Spotifydata (
+id integer PRIMARY KEY,
+artist_name varchar NOT NULL,
+track_name varchar NOT NULL,
+track_id varchar NOT NULL,
+popularity integer NOT NULL,
+danceability decimal(4,3) NOT NULL,
+energy decimal(4,3) NOT NULL,
+song_key integer NOT NULL,
+loudness decimal(5,3) NOT NULL,
+song_mode integer NOT NULL,
+speechiness decimal(5,4) NOT NULL,
+acousticness decimal(6,5) NOT NULL,
+instrumentalness decimal(8,7) NOT NULL,
+liveness decimal(5,4) NOT NULL,
+valence decimal(4,3) NOT NULL,
+tempo decimal(6,3) NOT NULL,
+duration_ms integer NOT NULL,
+time_signature integer NOT NULL )
+
+/* I then inserted the Spotify .csv data into the table (in SQLiteStudio).*/
+
+/* Lastly, I explored & analyzed the data */
+
+/* Who are the top 10 artists based on average popularity? Show average danceability and average energy as well. */
+SELECT artist_name, AVG(popularity) AS avg_popularity, AVG(danceability) AS avg_danceability, AVG(energy) AS avg_energy
+FROM BIT_DB.Spotifydata
+GROUP BY artist_name
+ORDER BY avg_popularity desc ;
+
+/* Now select an artist and list their songs ordered by energy level*/
+SELECT track_name, energy
+FROM BIT_DB.Spotifydata
+WHERE artist_name = 'Olivia Rodrigo'
+ORDER BY energy desc;
+
+
+/* What artist released the longest song? */ 
+SELECT artist_name, track_name, duration_ms
+FROM BIT_DB.Spotifydata
+ORDER BY duration_ms desc
+LIMIT 1;
