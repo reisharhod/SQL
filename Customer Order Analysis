@@ -1,0 +1,68 @@
+/* CUSTOMER ORDER ANALYSIS PROJECT */
+
+/* #In this SQL project, I'm querying a database with multiple tables in it to quantify statistics about customer and order data. */
+
+/* Viewing elements of the datasets */
+SELECT * FROM BIT_DB.customers LIMIT 20;
+/* Note: customers table contains columns "order_id" & "acctnum" */
+
+SELECT * FROM BIT_DB.JanSales LIMIT 20;
+/* Note: JanSales table contains columns "orderID", "Product", "Quantity", "price", "orderdate" & "location"  */
+
+SELECT * FROM BIT_DB.FebSales ;
+/* Note: FebSales table contains columns "orderID", "Product", "Quantity", "price", "orderdate" & "location" */
+
+
+/* Determining how many orders were placed in January */
+SELECT COUNT(orderID) 
+FROM BIT_DB.JanSales
+WHERE length(orderID) = 6
+AND orderID <> 'Order ID';
+
+/* Finding out how many of those January orders were for an iPhone */
+SELECT COUNT(orderID) 
+FROM BIT_DB.JanSales
+WHERE length(orderID) = 6
+AND orderID <> 'Order ID'
+AND Product = "iPhone";
+
+/* Selecting the customer account numbers for all orders placed in February */
+SELECT acctnum
+FROM BIT_DB.customers customers
+INNER JOIN BIT_DB.FebSales Feb
+ON customers.order_id = Feb.orderID
+WHERE length(orderID) = 6
+AND orderID <> 'Order ID';
+
+/* Determining which product was the cheapest one sold in Janaury and the price */
+SELECT Product, price 
+FROM BIT_DB.JanSales
+WHERE length(orderID) = 6
+AND orderID <> 'Order ID'
+ORDER BY price
+LIMIT 1;
+
+/* Determining the total revenue for each product sold in January */
+SELECT Product, ROUND(SUM(Quantity)*price,2) AS revenue
+FROM BIT_DB.JanSales
+WHERE length(orderID) = 6
+AND orderID <> 'Order ID'
+GROUP BY Product
+ORDER BY revenue;
+
+/* Determining which products were sold in February at 548 Lincoln St, Seattle, WA 98101, how many of each were sold, and the total revenue*/
+SELECT Product, SUM(Quantity), ROUND(SUM(Quantity)*price,2) AS revenue
+FROM BIT_DB.FebSales
+WHERE length(orderID) = 6
+AND orderID <> 'Order ID'
+AND location = '548 Lincoln St, Seattle, WA 98101'
+GROUP BY Product;
+
+/* Determining how many customers ordered more than 2 products at a time in February, and the average amount spent for those customers*/
+SELECT COUNT(customers.acctnum), ROUND(AVG(Quantity*price),2) AS avgprice
+FROM BIT_DB.FebSales Feb 
+LEFT JOIN BIT_DB.customers customers
+ON customers.order_id = Feb.orderID
+WHERE length(orderID) = 6
+AND orderID <> 'Order ID'
+AND Feb.Quantity > 2;
