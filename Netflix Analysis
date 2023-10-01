@@ -1,6 +1,9 @@
 /* NETFLIX ANALYSIS PROJECT */
 
-/* This project utilized data from the following Netflix dataset: */
+/* This project reveals insights about TV and Movie content hosted on Netflix. 
+
+The project was written using the PostgreSQL dialect and utilized data from the following two Netflix datasets: */
+
 CREATE TABLE netflix_titles_info
     ("show_id" varchar(5), "type" varchar(7), "title" varchar(58), "country" varchar(74), "date_added" timestamp, "release_year" int, "rating" varchar(5), "duration" varchar(9), "listed_in" varchar(74))
 ;
@@ -65,28 +68,30 @@ FROM "netflix_people" people
 LEFT JOIN "netflix_titles_info" titles
 ON people.show_id = titles.show_id;
 
-/* Finding out how many movie titles are in the database */
+/* The following SQL was written to answer specific questions/inquiries about the Netflix content: */
+
+/* 1. How many movie titles are there in the database? (movies only, not tv shows) */
 SELECT COUNT(*)
 FROM "netflix_titles_info"
 WHERE type = 'Movie';
 
-/* Determining when the most recent batch of tv shows and/or movies were added to the database */
+/* 2. When was the most recent batch of tv shows and/or movies added to the database?  */
 SELECT MAX(date(date_added))
 FROM "netflix_titles_info";
 
-/* Listing all the movies and tv shows in alphabetical order */
+/* 3. List all the movies and tv shows in alphabetical order. */
 SELECT title
 FROM "netflix_titles_info"
 ORDER BY title;
 
-/* Determining who was the director for the movie "The Starling" */
+/* 4. Who was the Director for the movie "The Starling"? */
 SELECT people.director, titles.title
 FROM "netflix_people" people
 LEFT JOIN "netflix_titles_info" titles
 ON people.show_id = titles.show_id
 WHERE titles.title = 'The Starling';
 
-/* Finding the oldest movie in the database and the year it was made */
+/* 5. What is the oldest movie in the database and what year was it made? */
 SELECT release_year, title
 FROM "netflix_titles_info"
 WHERE type = 'Movie'
