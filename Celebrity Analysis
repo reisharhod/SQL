@@ -1,4 +1,6 @@
-/* Creating table about celebrities and what they do here */
+/* CELEBRITY ANALYSIS PROJECT */
+
+/* Creating a table about celebrities and their ages */
 CREATE TABLE celebrities (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT,
@@ -20,7 +22,7 @@ INSERT INTO celebrities (name, age) VALUES ("Denzel Washington", "68");
 INSERT INTO celebrities (name, age) VALUES ("Ryan Gosling", "42");
 INSERT INTO celebrities (name, age) VALUES ("John Legend", "44");
 
-/* Creating a table about their hometw */
+/* Creating a table about their career type */
 CREATE table career (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     person_id INTEGER,
@@ -67,9 +69,8 @@ ON a.id = couples.celebrity1_id
 JOIN celebrities b
 ON b.id = couples.celebrity2_id;
 
-/* Joining the first two tables */
+/* Joining the first two tables to combine celebrity age and career title */
 SELECT celebrities.name , celebrities.age, career.title
 FROM celebrities 
 JOIN career
 ON celebrities.id = career.id;
-
