@@ -1,0 +1,108 @@
+/* BREAK INTO TECH DATA ANALYTICS CERTIFICATE PROGRAM: FINAL SQL PROJECT */
+
+/* For this project, I used a dataset called chinook that represents a digital media store and includes tables for artists, albums, media tracks, invoices, and customers. */
+
+/* The following SQL was written to answer specific questions/inquiries about the media content: */
+
+/* 1. Show Customers (their full names, customer ID, and country) who are not in the US. */
+SELECT Customerid, FirstName, LastName, Country
+FROM chinook.customers
+WHERE Country != 'USA'
+
+/* 2. Show only the Customers from Brazil. */
+SELECT CustomerId, FirstName, LastName, Country
+FROM chinook.customers
+WHERE Country = 'Brazil'
+
+/* 3. Find the Invoices of customers who are from Brazil. 
+(Show the customer's full name, Invoice ID, Date of the invoice, and billing country.) */
+SELECT i.InvoiceId, c.FirstName, c.LastName, i.InvoiceDate, i.BillingCountry
+FROM chinook.invoices AS i
+LEFT JOIN chinook.customers AS c
+ON i.CustomerId = c.CustomerId
+WHERE i.BillingCountry = 'Brazil';
+
+/* 4. Show the Employees who are Sales Agents.  */
+SELECT EmployeeId, FirstName, LastName
+FROM chinook.employees
+WHERE Title = 'Sales Support Agent';
+
+/* 5. Find a unique/distinct list of billing countries from the Invoice table. */
+SELECT DISTINCT BillingCountry
+FROM chinook.invoices
+ORDER BY BillingCountry;
+
+/* 6. Provide a query that shows the invoices associated with each sales agent. Include the Sales Agent's full name.  */
+SELECT i.InvoiceId, e.FirstName, e.LastName
+FROM chinook.invoices AS i
+JOIN chinook.Customers AS c ON c.CustomerId = i.CustomerId
+JOIN chinook.employees AS e ON e.EmployeeId = c.SupportRepId
+
+/* 7. Show the Invoice Total, Customer name, Country, and Sales Agent name for all invoices and customers.  */
+SELECT i.Total, c.FirstName AS CustomerFirstName, c.LastName AS customerLastName, c.Country, e.FirstName AS EmployeeFirstName, e.LastName AS EmployeeLastName
+FROM chinook.invoices AS i
+JOIN chinook.Customers AS c ON c.CustomerId = i.CustomerId
+JOIN chinook.employees AS e ON e.EmployeeId = c.SupportRepId
+
+/* 8. How many Invoices were there in 2009? */
+SELECT COUNT(*)
+FROM chinook.invoices
+WHERE InvoiceDate LIKE '2009%'
+
+/* 9. What are the total sales for 2009? */
+SELECT ROUND(SUM(Total),2)
+FROM chinook.invoices
+WHERE InvoiceDate LIKE '2009%'
+
+/* 10. Write a query that includes the purchased track name with each invoice line ID.*/
+SELECT t.Name, i.InvoiceLineId
+FROM chinook.invoice_items AS i
+JOIN chinook.tracks AS t 
+ON i.TrackId = t.trackId;
+
+/* 11. Write a query that includes the purchased track name AND artist name with each invoice line ID. */
+SELECT ar.Name AS ArtistName, t.Name AS TrackName, i.InvoiceLineId 
+FROM chinook.invoice_items AS i
+JOIN chinook.tracks AS t ON t.TrackId = i.TrackId
+JOIN chinook.albums AS al ON al.AlbumId = t.AlbumId
+JOIN chinook.artists AS ar ON ar.ArtistId = al.ArtistId
+
+/* 12. Provide a query that shows all the Tracks, and include the Album name, Media type, and Genre.*/
+SELECT t.Name AS TrackName, al.Title AS AlbumTitle, m.Name AS MediaType, g.Name AS Genre
+FROM chinook.albums AS al
+JOIN chinook.tracks AS t ON t.AlbumId = al.AlbumId
+JOIN chinook.media_types AS m ON m.MediaTypeId = t.MediaTypeId
+JOIN chinook.genres AS g ON g.GenreId = t.GenreId;
+
+/* 13. Show the total sales made by each sales agent. */
+SELECT ROUND(SUM(i.Total),2) AS TotalSales, e.FirstName AS EmployeeFirstName, e.LastName AS EmployeeLastName
+FROM chinook.invoices AS i
+JOIN chinook.Customers AS c ON c.CustomerId = i.CustomerId
+JOIN chinook.employees AS e ON e.EmployeeId = c.SupportRepId
+GROUP BY e.FirstName
+
+/* 14. Which sales agent made the most dollars in sales in 2009? */
+SELECT e.FirstName, e.LastName, ROUND(SUM(Total),2) AS TotalSales
+FROM chinook.employees AS e
+JOIN chinook.customers AS c ON c.SupportRepId = e.EmployeeId
+JOIN chinook.invoices AS i ON i.CustomerId = c.CustomerId
+WHERE InvoiceDate LIKE '2009%'
+GROUP BY e.FirstName
+ORDER BY TotalSales  DESC 
+LIMIT 1;
+
+/* 15. List out the tracks with their corresponding playlist name */
+SELECT t.Name AS TrackName, pl.Name AS PlaylistName
+FROM chinook.tracks AS t
+JOIN chinook.playlist_track AS plt ON plt.TrackId = t.TrackId
+JOIN chinook.playlists AS pl ON pl.PlaylistId = plt.PlaylistId 
+GROUP BY t.Name
+
+/* 16. Determine how many tracks each artist has */
+SELECT COUNT(t.Trackid) AS TotalTracks, ar.Name AS ArtistName
+FROM chinook.artists AS ar
+JOIN chinook.albums AS al ON al.ArtistId = ar.ArtistId
+JOIN chinook.tracks AS t ON t.AlbumId = al.AlbumId
+GROUP BY ArtistName
+ORDER BY TotalTracks desc
+
